@@ -1,0 +1,11 @@
+1. Crear la clase Lenguaje que recibe por herencia la clase sintaxis
+2. Crear 2 constructores, uno sin argumento y otro con el archivo a compilar de
+3. Cada produccion de la gramatica es un metodo de tipo void sin argumentos
+   de la clase lenguaje
+4. La primera produccion es publica y el resto privada
+5. El lado izquerdo de la producción es el cuerpo del metodo
+
+   a) Para los simbolos no terminales invocar en método
+   b) Para los simbolos terminales hacer MATCH
+   c) Para la cerradura epsilon programar un IF
+   d) Para el OR programar IF-ELSE IF-ELSE

@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "IF/kn6UQc0F/BGmwH2oDilFcDwfPayMVrelU2oAQ+k3/ZFN4UnFiUTtNDR6YMfSCWAdGgsOZfNctV0u3TBIamg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Bry\\Documents\\ITQ\\Semestre 6\\Lenguajes y Automatas 2\\Unidad 1\\Sintaxis 2\\Sintaxis 2.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Bry\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.21\\microsoft.netcore.app.ref.6.0.21.nupkg.sha512",
+    "C:\\Users\\Bry\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.21\\microsoft.windowsdesktop.app.ref.6.0.21.nupkg.sha512",
+    "C:\\Users\\Bry\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.21\\microsoft.aspnetcore.app.ref.6.0.21.nupkg.sha512",
+    "C:\\Users\\Bry\\.nuget\\packages\\microsoft.netcore.app.host.win-x86\\6.0.21\\microsoft.netcore.app.host.win-x86.6.0.21.nupkg.sha512"
+  ],
+  "logs": []
+}
