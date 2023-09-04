@@ -7,7 +7,7 @@ using System.Threading.Tasks;
     Requerimiento 1: Mensajes del printf deben salir sin comillas
                      Incluir \n y \t como secuencias de escape
     Requerimiento 2: Agregar el % al PorFactor
-                     Modifcar el valor de una variable con ++,--,+=,-=,*=,/=.%=
+                     Modificar el valor de una variable con ++,--,+=,-=,*=,/=.%=
     Requerimiento 3: Cada vez que se haga un match(Tipos.Identificador) verficar el
                      uso de la variable
                      Icremento(), Printf(), Factor()
@@ -79,7 +79,7 @@ namespace Sintaxis_2
                 }
             }
         }
-        private float getValor(string nombre) //Funcion que regresa el valor de una variable en la lista
+        private float GetValor(string nombre)
         {
             foreach (Variable v in lista)
             {
@@ -87,8 +87,8 @@ namespace Sintaxis_2
                 {
                     return v.getValor();
                 }
-                throw new Error("La variable <" + nombre + "> no está declarada", log, linea, columna);
             }
+            throw new Error("La variable <" + nombre + "> no está declarada", log, linea, columna);
         }
         // Libreria -> #include<Identificador(.h)?>
         private void Libreria()
@@ -371,18 +371,24 @@ namespace Sintaxis_2
             match("printf");
             match("(");
 
-            //vamos a imprimir la cadena sin comillas
-            string cadena = getContenido(); //guardamos el contenido de la cadena
+            //guardamos el contenido de la cadena
+            string cadena = getContenido();
             
-            //tenemos que tener alguna prueba para ver si la cadena tiene comillas
-            //si tiene comillas, entonces estas se eliminan
-            if (contenido.Length => 2 && contenido[0] == '"' && contenido[contenido.Length - 1] == '"')
-            {
-                contenido = contenido.Substring(1, contenido.Length - 2);
-            }
+            //Vamos a quitar las comillas cualquier cadena utilizando el metodo Trim
+            cadena = cadena.Trim('"');
+            //Podemos observar que este metodo Trim, es eficiente para quitar las comillas
+            //Ya que consta de un arreglo de caracteres, y si encuentra una comilla, la quita
 
-            //ahora vamos a imprimir la cadena sin comillas y en consola con formato
-            Console.Write(getContenido());
+            //Ahora vamos a ver si la cadena tiene secuencias de escape ya sea \n o \t
+            //Replace reemplaza el caracter que le indiquemos y Contains verifica si existe
+            if (cadena.Contains("\\n") || cadena.Contains("\\t"))
+            {
+                cadena = cadena.Replace("\\t", "\t");
+                cadena = cadena.Replace("\\n", "\n");
+            }       
+            //Ahora, como el getContenido lo guardamos con un string en "cadena"...
+            //Lo vamos a mostrar en consola con un Console.Write pero con (cadena) porque ahi se guardo el contenido
+            Console.Write(cadena); 
             match(Tipos.Cadena); //match de la cadena
 
             if (getContenido() == ",")
@@ -397,6 +403,7 @@ namespace Sintaxis_2
             match(")"); //match del parentesis
             match(";"); //match del punto y coma
         }
+
         //Scanf -> scanf(cadena,&Identificador);
         private void Scanf()
         {
@@ -439,13 +446,14 @@ namespace Sintaxis_2
                 string operador = getContenido();
                 match(Tipos.OperadorTermino);
                 Termino();
-                log.Write(" " + operador);
-                float R2 = stack.Pop();
-                float R1 = stack.Pop();
-                if (operador == "+")
-                    stack.Push(R1+R2);
+                
+                log.Write(" " + operador); //Agrega un espacio en blanco antes de escribir el operador
+                float R2 = stack.Pop(); //Saca el segundo operando
+                float R1 = stack.Pop(); //Saca el primer operando
+                if (operador == "+") //Realiza la operación
+                    stack.Push(R1+R2); //Guarda el resultado en la pila cuando es una suma
                 else
-                    stack.Push(R1-R2);
+                    stack.Push(R1-R2); //Guarda el resultado en la pila en caso de ser una resta
             }
         }
         //Termino -> Factor PorFactor
