@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 /*
@@ -205,27 +206,35 @@ namespace Sintaxis_2
         //Asignacion -> identificador = Expresion;
         private void Asignacion(bool ejecuta)
         {
+            float resultado = 0;
             if (!Existe(getContenido()))
             {
                 throw new Error("de sintaxis, la variable <" + getContenido() + "> no está declarada", log, linea, columna);
             }
+
             log.Write(getContenido() + " = ");
-            string variable = getContenido();
+            string variable = getContenido(); //Guardamos el contenido de la variable en un string 
             match(Tipos.Identificador);
+
             if (getContenido() == "=")
             {
                 match("=");
                 Expresion();
+                resultado = stack.Pop(); //Sacamos el valor del stack
             }
             else if (getClasificacion() == Tipos.IncrementoTermino)
             {
                 if (getContenido() == "++")
                 {
                     match("++");
+                    //Para modificar los valores, vamos a utilizar la sig linea
+                    //La cual va constar de asignar el signo despues del contenido de la variable
+                    resultado = GetValor(variable) + 1;
                 }
                 else
                 {
                     match("--");
+                    resultado = GetValor(variable) - 1;
                 }
             }
             else if (getClasificacion() == Tipos.IncrementoFactor)
@@ -233,29 +242,43 @@ namespace Sintaxis_2
 
                 if (getContenido() == "+=")
                 {
-                    Expresion();
                     match("+=");
+                    Expresion();
+                    resultado = GetValor(variable) + stack.Pop(); //En este caso vamos a sacar el valor del stack y lo vamos a sumar con el valor de la variable
+
                 }
                 else if (getContenido() == "-=")
                 {
                     match("-=");
+                    Expresion();
+                    resultado = GetValor(variable) - stack.Pop();
                 }
                 else if (getContenido() == "*=")
                 {
                     match("*=");
+                    Expresion();
+                    resultado = GetValor(variable) * stack.Pop();
                 }
                 else if (getContenido() == "/=")
                 {
                     match("/=");
+                    Expresion();
+                    resultado = GetValor(variable) / stack.Pop();
                 }
                 else if (getContenido() == "%=")
                 {
                     match("%=");
+                    Expresion();
+                    resultado = GetValor(variable) % stack.Pop();
                 }
-                Expresion();
             }
-            float resultado = stack.Pop();
+
+            else
+            {
+                throw new Error("de sintaxis, se esperaba un operador de asignación", log, linea, columna);
+            }
             log.WriteLine(" = " + resultado);
+            
             //Agregamos el if para los incrementos
             if (ejecuta)
             {
@@ -325,6 +348,9 @@ namespace Sintaxis_2
                 throw new Error("de sintaxis, la variable <" + getContenido() + "> no está declarada", log, linea, columna);
             }
             match(Tipos.Identificador);
+            //Verificamos el uso de la variable
+            stack.Push(float.Parse(getContenido()));
+
             if (getContenido() == "++")
             {
                 match("++");
@@ -416,6 +442,8 @@ namespace Sintaxis_2
                 Console.Write(cadena); 
             }
             match(Tipos.Cadena); //match de la cadena
+            //Verificamos el uso de la variable
+            stack.Push(float.Parse(getContenido()));
 
             if (getContenido() == ",")
             {
@@ -524,7 +552,7 @@ namespace Sintaxis_2
             if (getClasificacion() == Tipos.Numero)
             {
                 log.Write(" " + getContenido());
-                stack.Push(float.Parse(getContenido()));
+                stack.Push(float.Parse(getContenido())); //Verficamos el uso de la variable
                 match(Tipos.Numero);
             }
             else if (getClasificacion() == Tipos.Identificador)
