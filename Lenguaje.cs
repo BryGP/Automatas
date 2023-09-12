@@ -405,11 +405,13 @@ namespace Sintaxis_2
 
                 if (getContenido() == "{")
                 {
-                    BloqueInstrucciones(ejecuta);
+                    /*Para hacer el else, vamos a necesitar efectuar
+                    la instruccion evaluar, pero al contrario, que seria "!" */
+                    BloqueInstrucciones(!evaluacion);
                 }
                 else
                 {
-                    Instruccion(ejecuta);
+                    Instruccion(!evaluacion);
                 }
             }
 
@@ -442,8 +444,6 @@ namespace Sintaxis_2
                 Console.Write(cadena); 
             }
             match(Tipos.Cadena); //match de la cadena
-            //Verificamos el uso de la variable
-            stack.Push(float.Parse(getContenido()));
 
             if (getContenido() == ",")
             {
@@ -453,6 +453,8 @@ namespace Sintaxis_2
                     throw new Error("de sintaxis, la variable <" + getContenido() + "> no está declarada", log, linea, columna);
                 }
                 match(Tipos.Identificador);
+                //Verificamos el uso de la variable
+                stack.Push(float.Parse(getContenido()));
             }
             match(")"); //match del parentesis
             match(";"); //match del punto y coma
@@ -466,17 +468,29 @@ namespace Sintaxis_2
             match(Tipos.Cadena);
             match(",");
             match("&");
+            string variable = getContenido();
+            
             if (!Existe(getContenido()))
             {
                 throw new Error("de sintaxis, la variable <" + getContenido() + "> no está declarada", log, linea, columna);
             }
-            string variable = getContenido();
             match(Tipos.Identificador);
 
             if (ejecuta)
             {
-                string captura = "" + Console.ReadLine();
+                string captura = Console.ReadLine();
                 float resultado = float.Parse(captura);
+
+                //Agregamos la excepcion del scanf cuando se capture un string                
+                if (float.TryParse(captura, out resultado))
+                {
+                    Modifica(variable,resultado);
+                }
+                else
+                {
+                    throw new Error("de sintaxis", log, linea, columna);
+                }
+                //Limpiamos el buffer
                 Modifica(variable,resultado);
             }
             match(")");

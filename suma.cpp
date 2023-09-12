@@ -1,31 +1,37 @@
 #include<stdio.h>
 #include<math.h>
 #include<iostream>
-#include<conio.h>
 
-float a, b, c, d;
-int x;
+float a,b,c,d;
 
 void main() // Funcion principal
 {
     a=(3+5)*8-(10-4)/2;
-    b=3+5;
+    b=8;
 
-    //printf("\t\tValor de x27 = \n");
-    //scanf("%f",&x27);
-    
-    /*Probamos el printf
-    printf ("Esta es una prueba de un texto sin comillas");
-    printf ("\nEste texto tiene que tener un salto de linea\n");
-    printf ("\tEste texto tiene que estar centrado");*/
-
-    x = 8;
-    x ++;
-
-    printf("\ El valor de x es:", x);
-    
-    /*if (1 == 2)
+    printf("Valor de c = ");
+    scanf("%f", &c);
+    if (c % 2 == 0)
     {
-        
-    }*/
+        printf("\nc es par\t\tITQ");
+        printf("1");
+        if (c == 10)
+        {
+            printf("El valor de c = ",c);
+            printf("2");
+        }
+    }
+    else
+    {
+        printf("\nc es impar\t\tITQ");
+    }
+
+    b++;
+    c--;
+    c+=(10-b);
+    b-=9;
+
+    printf("El valor de a = ", a);
+    printf("El valor de b = ", b);
+    printf("El valor de d = ", d);
 }
