@@ -278,11 +278,11 @@ namespace Sintaxis_2
                 throw new Error("de sintaxis, se esperaba un operador de asignación", log, linea, columna);
             }
             log.WriteLine(" = " + resultado);
-            
+
             //Agregamos el if para los incrementos
             if (ejecuta)
             {
-                Modifica(variable,resultado);
+                Modifica(variable, resultado);
             }
             match(";");
         }
@@ -373,12 +373,12 @@ namespace Sintaxis_2
             //Añadimos el switch para los operadores relacionales
             switch (operador)
             {
-                case "==" : return R2 == R1;
-                case ">"  : return R2 > R1;
-                case ">=" : return R2 >= R1;
-                case "<"  : return R2 < R1;
-                case "<=" : return R2 <= R1;
-                default   : return R2 != R1;
+                case "==": return R2 == R1;
+                case ">": return R2 > R1;
+                case ">=": return R2 >= R1;
+                case "<": return R2 < R1;
+                case "<=": return R2 <= R1;
+                default: return R2 != R1;
             }
         }
         //If -> if (Condicion) BloqueInstrucciones | Instruccion (else BloqueInstrucciones | Instruccion)?
@@ -386,33 +386,38 @@ namespace Sintaxis_2
         {
             match("if");
             match("(");
-            
-            bool evaluacion = Condicion() && ejecuta; //Agregamos el && ejecuta para que no se ejecute el if si no se cumple la condicion         
+            bool evaluacion = Condicion() && ejecuta; //Agregamos el && ejecuta para que no se ejecute el if si no se cumple la condicion
             Console.WriteLine(evaluacion); //Evaluacion se encarga de evaluar la condicion y saber si es verdadera o falsa
             match(")");
 
+            //Vamos a crear un bool para el if
+            bool valorIf = evaluacion;
             if (getContenido() == "{")
             {
-                BloqueInstrucciones(evaluacion);
+                BloqueInstrucciones(valorIf);
             }
             else
             {
-                Instruccion(evaluacion);
+                Instruccion(valorIf);
             }
+
+            //Agregamos el bool del else
+            bool valorElse = !evaluacion;
             if (getContenido() == "else")
             {
                 match("else");
 
                 if (getContenido() == "{")
                 {
-                    BloqueInstrucciones(ejecuta);
+                    /*Para hacer el else, vamos a necesitar efectuar
+                    la instruccion evaluar, pero al contrario, que seria "!" */
+                    BloqueInstrucciones(valorElse);
                 }
                 else
                 {
-                    Instruccion(ejecuta);
+                    Instruccion(valorElse);
                 }
             }
-
         }
         //Printf -> printf(cadena(,Identificador)?);
         private void Printf(bool ejecuta)
@@ -422,7 +427,7 @@ namespace Sintaxis_2
 
             //guardamos el contenido de la cadena
             string cadena = getContenido();
-            
+
             //Vamos a quitar las comillas cualquier cadena utilizando el metodo Trim
             cadena = cadena.Trim('"');
             //Podemos observar que este metodo Trim, es eficiente para quitar las comillas
@@ -434,16 +439,14 @@ namespace Sintaxis_2
             {
                 cadena = cadena.Replace("\\t", "\t");
                 cadena = cadena.Replace("\\n", "\n");
-            }       
+            }
             //Ahora, como el getContenido lo guardamos con un string en "cadena"...
             //Lo vamos a mostrar en consola con un Console.Write pero con (cadena) porque ahi se guardo el contenido
-            if(ejecuta)
+            if (ejecuta)
             {
-                Console.Write(cadena); 
+                Console.Write(cadena);
             }
             match(Tipos.Cadena); //match de la cadena
-            //Verificamos el uso de la variable
-            stack.Push(float.Parse(getContenido()));
 
             if (getContenido() == ",")
             {
@@ -452,7 +455,10 @@ namespace Sintaxis_2
                 {
                     throw new Error("de sintaxis, la variable <" + getContenido() + "> no está declarada", log, linea, columna);
                 }
+                Console.Write(GetValor(getContenido())); //Agregamos el valor de la variable al stack
                 match(Tipos.Identificador);
+                //Verificamos el uso de la variable
+                stack.Push(float.Parse(getContenido()));
             }
             match(")"); //match del parentesis
             match(";"); //match del punto y coma
@@ -466,18 +472,27 @@ namespace Sintaxis_2
             match(Tipos.Cadena);
             match(",");
             match("&");
+            string variable = getContenido();
+
             if (!Existe(getContenido()))
             {
                 throw new Error("de sintaxis, la variable <" + getContenido() + "> no está declarada", log, linea, columna);
             }
-            string variable = getContenido();
             match(Tipos.Identificador);
 
             if (ejecuta)
             {
-                string captura = "" + Console.ReadLine();
-                float resultado = float.Parse(captura);
-                Modifica(variable,resultado);
+                string captura = Console.ReadLine();
+                //Agregamos la excepcion del scanf cuando se capture un string                
+                if (float.TryParse(captura, out float resultado))
+                {
+                    // Si se puede hacer la conversión, llamamos a Modifica
+                    Modifica(variable, resultado);
+                }
+                else
+                {
+                    throw new Exception("Se capturó una cadena...");
+                }
             }
             match(")");
             match(";");
@@ -505,14 +520,15 @@ namespace Sintaxis_2
                 string operador = getContenido();
                 match(Tipos.OperadorTermino);
                 Termino();
-                
+
                 log.Write(" " + operador); //Agrega un espacio en blanco antes de escribir el operador
                 float R2 = stack.Pop(); //Saca el segundo operando
                 float R1 = stack.Pop(); //Saca el primer operando
+                
                 if (operador == "+") //Realiza la operación
-                    stack.Push(R1+R2); //Guarda el resultado en la pila cuando es una suma
+                    stack.Push(R1 + R2); //Guarda el resultado en la pila cuando es una suma
                 else
-                    stack.Push(R1-R2); //Guarda el resultado en la pila en caso de ser una resta
+                    stack.Push(R1 - R2); //Guarda el resultado en la pila en caso de ser una resta
             }
         }
         //Termino -> Factor PorFactor
@@ -529,21 +545,19 @@ namespace Sintaxis_2
                 string operador = getContenido();
                 match(Tipos.OperadorFactor);
                 Factor();
-                
+
                 log.Write(" " + operador);
                 float R2 = stack.Pop();
                 float R1 = stack.Pop();
 
                 if (operador == "*")
-                    stack.Push(R1*R2);
-                else
-                    stack.Push(R1/R2);
+                    stack.Push(R1 * R2);
+                if (operador == "/")
+                    stack.Push(R1 / R2);
 
                 //Agregamos el % al PorFactor
                 if (operador == "%")
-                    stack.Push(R1%R2);
-                else
-                    stack.Push(R1/R2);
+                    stack.Push(R1 % R2);
             }
         }
         //Factor -> numero | identificador | (Expresion)
