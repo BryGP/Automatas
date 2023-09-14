@@ -13,7 +13,7 @@ void main() // Funcion principal
     if (c%2==0)
     {
 
-        printf("\nc es par\t\tITQ");
+        printf("\nc es par\t\tITQ\n");
         if (c==10)
             printf("Se ejecuta el segundo If ",c);
         else

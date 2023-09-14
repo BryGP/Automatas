@@ -221,24 +221,18 @@ namespace Sintaxis_2
                 Expresion();
                 resultado = stack.Pop(); //Sacamos el valor del stack
             }
-            else if (getClasificacion() == Tipos.IncrementoTermino)
-            {
-                if (getContenido() == "++")
+                else if (getContenido() == "++")
                 {
                     match("++");
-                    //Para modificar los valores, vamos a utilizar la sig linea
-                    //La cual va constar de asignar el signo despues del contenido de la variable
                     resultado = GetValor(variable) + 1;
                 }
-                else
+                else if (getContenido() == "--")
                 {
                     match("--");
                     resultado = GetValor(variable) - 1;
                 }
-            }
-            else if (getClasificacion() == Tipos.IncrementoFactor)
-            {
-                if (getContenido() == "+=")
+
+                else if (getContenido() == "+=")
                 {
                     match("+=");
                     Expresion();
@@ -269,7 +263,6 @@ namespace Sintaxis_2
                     Expresion();
                     resultado = GetValor(variable) % stack.Pop();
                 }
-            }
 
             else
             {
