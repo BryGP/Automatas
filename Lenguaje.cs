@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 /*
@@ -239,7 +238,6 @@ namespace Sintaxis_2
             }
             else if (getClasificacion() == Tipos.IncrementoFactor)
             {
-
                 if (getContenido() == "+=")
                 {
                     match("+=");
@@ -387,7 +385,7 @@ namespace Sintaxis_2
             match("if");
             match("(");
             bool evaluacion = Condicion() && ejecuta; //Agregamos el && ejecuta para que no se ejecute el if si no se cumple la condicion
-            Console.WriteLine(evaluacion); //Evaluacion se encarga de evaluar la condicion y saber si es verdadera o falsa
+            //Console.WriteLine(evaluacion); //Evaluacion se encarga de evaluar la condicion y saber si es verdadera o falsa
             match(")");
 
             //Vamos a crear un bool para el if
@@ -400,7 +398,7 @@ namespace Sintaxis_2
             {
                 Instruccion(valorIf);
             }
-
+            
             //Agregamos el bool del else
             bool valorElse = !evaluacion;
             if (getContenido() == "else")
@@ -457,11 +455,10 @@ namespace Sintaxis_2
                 }
                 Console.Write(GetValor(getContenido())); //Agregamos el valor de la variable al stack
                 match(Tipos.Identificador);
-                //Verificamos el uso de la variable
-                stack.Push(float.Parse(getContenido()));
+                //stack.Push(float.Parse(getContenido()));
             }
-            match(")"); //match del parentesis
-            match(";"); //match del punto y coma
+            match(")");
+            match(";");
         }
 
         //Scanf -> scanf(cadena,&Identificador);
@@ -524,7 +521,7 @@ namespace Sintaxis_2
                 log.Write(" " + operador); //Agrega un espacio en blanco antes de escribir el operador
                 float R2 = stack.Pop(); //Saca el segundo operando
                 float R1 = stack.Pop(); //Saca el primer operando
-                
+
                 if (operador == "+") //Realiza la operación
                     stack.Push(R1 + R2); //Guarda el resultado en la pila cuando es una suma
                 else
