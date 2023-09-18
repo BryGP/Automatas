@@ -221,52 +221,47 @@ namespace Sintaxis_2
                 Expresion();
                 resultado = stack.Pop(); //Sacamos el valor del stack
             }
-                else if (getContenido() == "++")
-                {
-                    match("++");
-                    resultado = GetValor(variable) + 1;
-                }
-                else if (getContenido() == "--")
-                {
-                    match("--");
-                    resultado = GetValor(variable) - 1;
-                }
-
-                else if (getContenido() == "+=")
-                {
-                    match("+=");
-                    Expresion();
-                    resultado = GetValor(variable) + stack.Pop(); //En este caso vamos a sacar el valor del stack y lo vamos a sumar con el valor de la variable
-
-                }
-                else if (getContenido() == "-=")
-                {
-                    match("-=");
-                    Expresion();
-                    resultado = GetValor(variable) - stack.Pop();
-                }
-                else if (getContenido() == "*=")
-                {
-                    match("*=");
-                    Expresion();
-                    resultado = GetValor(variable) * stack.Pop();
-                }
-                else if (getContenido() == "/=")
-                {
-                    match("/=");
-                    Expresion();
-                    resultado = GetValor(variable) / stack.Pop();
-                }
-                else if (getContenido() == "%=")
-                {
-                    match("%=");
-                    Expresion();
-                    resultado = GetValor(variable) % stack.Pop();
-                }
-
-            else
+            else if (getContenido() == "++")
             {
-                throw new Error("de sintaxis, se esperaba un operador de asignación", log, linea, columna);
+                match("++");
+                resultado = GetValor(variable) + 1;
+            }
+            else if (getContenido() == "--")
+            {
+                match("--");
+                resultado = GetValor(variable) - 1;
+            }
+
+            else if (getContenido() == "+=")
+            {
+                match("+=");
+                Expresion();
+                resultado = GetValor(variable) + stack.Pop(); //En este caso vamos a sacar el valor del stack y lo vamos a sumar con el valor de la variable
+
+            }
+            else if (getContenido() == "-=")
+            {
+                match("-=");
+                Expresion();
+                resultado = GetValor(variable) - stack.Pop();
+            }
+            else if (getContenido() == "*=")
+            {
+                match("*=");
+                Expresion();
+                resultado = GetValor(variable) * stack.Pop();
+            }
+            else if (getContenido() == "/=")
+            {
+                match("/=");
+                Expresion();
+                resultado = GetValor(variable) / stack.Pop();
+            }
+            else if (getContenido() == "%=")
+            {
+                match("%=");
+                Expresion();
+                resultado = GetValor(variable) % stack.Pop();
             }
             log.WriteLine(" = " + resultado);
 
@@ -391,9 +386,9 @@ namespace Sintaxis_2
             {
                 Instruccion(valorIf);
             }
-            
+
             //Agregamos el bool del else
-            bool valorElse = !evaluacion;
+            bool valorElse = !evaluacion && ejecuta;
             if (getContenido() == "else")
             {
                 match("else");
@@ -476,6 +471,7 @@ namespace Sintaxis_2
                 //Agregamos la excepcion del scanf cuando se capture un string                
                 if (float.TryParse(captura, out float resultado))
                 {
+                    // El tryParse intenta convertir la cadena capturada a un float y lo guarda en resultado
                     // Si se puede hacer la conversión, llamamos a Modifica
                     Modifica(variable, resultado);
                 }
