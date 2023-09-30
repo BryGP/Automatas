@@ -1,4 +1,4 @@
 Autor: Guillermo Fernandez Romero
 Fecha: 3-Mayo-2023 15:09
-x25 =  3 5 + 8 * 10 4 - 2 / - = 61
-x26 =  3 5 + = 8
+c =  20 = 20
+a =  +Error: de semantica, no se puede asignar un <Float> a un <Char> en la linea 23 columna 39

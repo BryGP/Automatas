@@ -17,6 +17,7 @@ namespace Sintaxis_2
         }
         public void match(string token_esperado)
         {
+            //Console.WriteLine(getContenido() + " " + getClasificacion());
             if (token_esperado == getContenido())
             {
                 nextToken();
@@ -28,6 +29,7 @@ namespace Sintaxis_2
         }
         public void match(Tipos token_esperado)
         {
+            //Console.WriteLine(getContenido() + " " + getClasificacion());
             if (token_esperado == getClasificacion())
             {
                 nextToken();

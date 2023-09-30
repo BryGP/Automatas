@@ -22,18 +22,20 @@ namespace Sintaxis_2
         {
             return nombre;
         }
-        public TiposDatos getTiposDatos()
+
+        public TiposDatos getTiposDato()
         {
             return this.tipo;
         }
+
         public void setValor(float valor)
         {
             this.valor = valor;
         }
+
         public float getValor()
         {
             return valor;
         }
-
     }
 }
