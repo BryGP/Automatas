@@ -162,6 +162,7 @@ namespace Sintaxis_2
             match(Tipos.TipoDato);
             ListaIdentificadores(tipo);
             match(";");
+
             if (getClasificacion() == Tipos.TipoDato)
             {
                 Variables();
@@ -240,10 +241,6 @@ namespace Sintaxis_2
         //Asignacion -> identificador = Expresion;
         private void Asignacion(bool ejecuta)
         {
-            // Declaramos los identificadores para el tipo de dato de la expresión.
-            // Tanto como destino y origen.
-            Variable.TiposDatos tipoOrigen = tipoDatoExpresion;
-            Variable.TiposDatos tipoDestino = getTipo(getContenido());
             // Declaramos una variable de tipo float para el resultado de la expresión.
             float resultado = 0;
             tipoDatoExpresion = Variable.TiposDatos.Char;
@@ -262,15 +259,6 @@ namespace Sintaxis_2
                 match("=");
                 Expresion();
                 resultado = stack.Pop();
-
-                if (tipoDestino >= tipoOrigen)
-                {
-                    tipoDatoExpresion = tipoDestino;
-                }
-                else
-                {
-                    throw new Error("de semantica, no se puede asignar un <" + tipoOrigen + "> a un <" + tipoDestino + ">", log, linea, columna);
-                }
             }
             else if (getClasificacion() == Tipos.IncrementoTermino)
             {
@@ -329,28 +317,35 @@ namespace Sintaxis_2
                 Console.WriteLine(resultado + " = " + tipoDatoResultado);
                 Console.WriteLine("\nExpresion = " + tipoDatoExpresion);
 
-                //Variable.TiposDatos tipoDatoMayor = tipoDatoVariable;
-
-                if (tipoDatoVariable >= tipoDatoResultado)
-                {
-                    Modifica(variable, resultado);
-                }
-                else
-                {
-                    throw new Error("de semantica, no se puede asignar in <" + tipoDatoResultado + "> a un <" + tipoDatoVariable + ">", log, linea, columna);
+                if (Castea(resultado, tipoDatoExpresion) == resultado) // Si el resultado no se castea, se valida el tipo de dato de la variable.
+                {                    
+                    if (tipoDatoVariable >= tipoDatoExpresion)
+                    {
+                        // Si corresponde, se modifica el valor de la variable.
+                        Modifica(variable, resultado);
+                    }
+                    else
+                    {
+                        // Si no corresponde, se lanza una excepcion.
+                        throw new Error("de semantica, no se puede asignar un <" + tipoDatoExpresion + "> a un <" + tipoDatoVariable + ">", log, linea, columna);
+                    }
                 }
             }
             match(";");
         }
-
         //While -> while(Condicion) BloqueInstrucciones | Instruccion
         private void While(bool ejecuta)
         {
             match("while");
             match("(");
-            bool condicion = Condicion();
-            while (condicion && ejecuta)
+
+            int inicia = caracter;
+            int lineaInicio = linea;
+            string variable = getContenido();
+
+            do
             {
+                ejecuta = Condicion() && ejecuta;
                 match(")");
                 if (getContenido() == "{")
                 {
@@ -360,40 +355,51 @@ namespace Sintaxis_2
                 {
                     Instruccion(ejecuta);
                 }
-                condicion = Condicion();
+                if (ejecuta)
+                {
+                    archivo.DiscardBufferedData();
+                    caracter = inicia - variable.Length - 1;
+                    archivo.BaseStream.Seek(caracter, SeekOrigin.Begin);
+                    nextToken();
+                    linea = lineaInicio;
+                }
             }
-            // Implementamos la ejecucion del do - while
-            if (getContenido() == "{")
-            {
-                BloqueInstrucciones(ejecuta);
-            }
-            else
-            {
-                Instruccion(ejecuta);
-            }
+            while (ejecuta);
         }
         //Do -> do BloqueInstrucciones | Instruccion while(Condicion)
         private void Do(bool ejecuta)
         {
             match("do");
-            if (getContenido() == "{")
-            {
-                BloqueInstrucciones(ejecuta);
-            }
-            else
-            {
-                Instruccion(ejecuta);
-            }
-            match("while");
-            match("(");
-            bool evaluacion = Condicion() && ejecuta;
-            match(")");
-            match(";");
 
-            if (evaluacion)
+            int inicia = caracter;
+            int lineaInicio = linea;
+            string variable = getContenido();
+
+            do
             {
-                Do(ejecuta);
-            }
+                if (getContenido() == "{")
+                {
+                    BloqueInstrucciones(ejecuta);
+                }
+                else
+                {
+                    Instruccion(ejecuta);
+                }
+                match("while");
+                match("(");
+                ejecuta = Condicion() && ejecuta;
+                match(")");
+                match(";");
+
+                if (ejecuta)
+                {
+                    archivo.DiscardBufferedData();
+                    caracter = inicia - variable.Length - 1;
+                    archivo.BaseStream.Seek(caracter, SeekOrigin.Begin);
+                    nextToken();
+                    linea = lineaInicio;
+                }
+            } while (ejecuta);
         }
         //For -> for(Asignacion Condicion; Incremento) BloqueInstrucciones | Instruccion
         private void For(bool ejecuta)
@@ -423,6 +429,7 @@ namespace Sintaxis_2
                 {
                     Instruccion(ejecuta);
                 }
+                // Si la condicion es verdadera, se ejecuta el incremento.
                 if (ejecuta)
                 {
                     Modifica(variable, resultado);
@@ -433,21 +440,23 @@ namespace Sintaxis_2
                     linea = lineaInicio; // Y vuelvo a la linea inicial del for.
                 }
             }
-            while (ejecuta);
+            while (ejecuta); // Se repite mientras la condicion sea verdadera.
         }
         //Incremento -> Identificador ++ | --
         private float Incremento(bool ejecuta)
         {
-            if (!Existe(getContenido()))
+            string nombre = getContenido(); // Vamos a tener el nombre de la variable.
+
+            if (!Existe(nombre))
             {
                 throw new Error("de sintaxis, la variable <" + getContenido() + "> no está declarada", log, linea, columna);
             }
-            string variable = getContenido(); // Vamos a tener el nombre de la variable.
             match(Tipos.Identificador);
+            log.WriteLine(getContenido());
             // Ahora, obtenemos el valor de la variable
             // Mediante la funcion getValor() y en una variable de tipo float
             // Para poder incrementar o decrementar el valor.
-            float resultado = getValor(variable);
+            float resultado = getValor(nombre);
             // Mediante el operador ++ o --.
             if (getContenido() == "++")
             {
@@ -639,11 +648,11 @@ namespace Sintaxis_2
                 }
 
                 stack.Push(getValor(getContenido()));
+                match(Tipos.Identificador);
                 if (tipoDatoExpresion < getTipo(getContenido()))
                 {
                     tipoDatoExpresion = getTipo(getContenido());
                 }
-                match(Tipos.Identificador);
             }
             else
             {
@@ -667,28 +676,60 @@ namespace Sintaxis_2
                 }
                 Expresion();
                 match(")");
+
                 if (huboCast)
                 {
                     tipoDatoExpresion = tipoDatoCast;
-                    //Modificamos el resultado de la expresión.
                     stack.Push(Castea(stack.Pop(), tipoDatoCast));
                 }
             }
         }
         //Funcion Castea -> Castea
-        float Castea(float valor, Variable.TiposDatos tipoDato)
+        float Castea(float resultado, Variable.TiposDatos tipoDato)
         {
             switch (tipoDato)
             {
-                //Para desarrollar la funcion Castea se debe de dividir el valor entre el maximo valor que puede tener el tipo de dato.
-                //Por ultimo se debe de sacar el modulo del resultado entre el maximo valor que puede tener el tipo de dato al que se quiere castear.
-                //Vamos a utilizar la funcion "Math.Round()" para redondear el valor y despues hacer las operaciones.
-                case Variable.TiposDatos.Char:
-                    return ((char)Math.Round(valor)) % 256;
                 case Variable.TiposDatos.Int:
-                    return (int)Math.Round(valor) % 65536;
-                default: return valor; //Si es float, no se hace nada.
+                    // Realizar casting a int si es necesario utilizando MaxValue y MinValue para validar el rango de cada tipo de dato
+                    if (resultado > int.MaxValue)
+                    {
+                        // Asignar el valor máximo del tipo de dato a la variable resultado.
+                        resultado = int.MaxValue;
+                    }
+                    else if (resultado < int.MinValue)
+                    {
+                        // Ahora el valor mínimo.
+                        resultado = int.MinValue;
+                    }
+                    else
+                    {
+                        // Si no se desborda, se realiza el casting con redondeo.
+                        resultado = (int)Math.Round(resultado);
+                    }
+                    break;
+
+                case Variable.TiposDatos.Char:
+                    // Realizar casting a char si es necesario
+                    if (resultado > char.MaxValue)
+                    {
+                        // Manejo de desbordamiento o truncamiento, según tu lógica
+                        resultado = char.MaxValue;
+                    }
+                    else if (resultado < char.MinValue)
+                    {
+                        resultado = char.MinValue;
+                    }
+                    else
+                    {
+                        resultado = (char)Math.Round(resultado);
+                    }
+                    break;
+
+                case Variable.TiposDatos.Float:
+                    // No se requiere casting, ya es float
+                    break;
             }
+            return resultado;
         }
     }
 }

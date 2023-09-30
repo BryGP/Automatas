@@ -8,39 +8,40 @@ float c;
 
 void main() // Funcion principal
 {
-    /*
-    do
-    {
-        printf("Ingresa un número: ");
-        scanf("%f", &c);
-        a = (char)((char)(c) + (float)(b));
-        printf("El resultado es: %c\n", a);
-    } while (c > 0.0);
-    */
-
-    c = 20;
-    printf("C = ",c);
-    a = (int)((char)(c) + (float)(b));
+    printf("C = ", c);
+    a = (char)((char)(c) + (float)(b));
 
     /*if (1 == 1)
     {
-        printf("\nHola");
-        if (2 == 1)
+        printf("Hola ");
+        if (1 == 2)
         {
-            printf(" \na todos");
+            printf("a todos");
         }
         else
         {
-            printf(" \na nadie");
+            printf("a nadie");
 
-            for (i=0; i<10; i++)
+            /*for (i = 0; i < 10; i++)
             {
-                printf("\nHola ",i);
-            }
+                printf("\nHola ", i);
+            }*/
+
+            /*while (i < 5)
+            {
+                printf("\nSoy un perro del evil ", i);
+                i++;
+            }*/
+
+            /*do
+            {
+                printf("\nEl valor de i es: ", i);
+                i++;
+            } while (i < 5);
         }
     }
     else
     {
-        printf("\nmundo");
+        printf(" mundo");
     }*/
 }
