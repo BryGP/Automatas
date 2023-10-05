@@ -2,46 +2,59 @@
 #include <math.h>
 #include <iostream>
 
-char a;
-int b, i;
-float c;
+char altura, i, j, k;
 
 void main() // Funcion principal
 {
-    printf("C = ", c);
-    a = (char)((char)(c) + (float)(b));
+    //k = (int)(10);
+    //k = 1.5;
+    k = ((char)(1.5));
 
-    /*if (1 == 1)
+    printf("\nAltura: ");
+    scanf("&i", &altura);
+
+    printf("\nfor:\n");
+    for (i = 1; i <= altura; i++)
     {
-        printf("Hola ");
-        if (1 == 2)
+        for (j = 250; j < 250 + i; j++)
         {
-            printf("a todos");
+            if (j % 2 == 0)
+                printf("-");
+            else
+                printf("+");
         }
-        else
-        {
-            printf("a nadie");
-
-            /*for (i = 0; i < 10; i++)
-            {
-                printf("\nHola ", i);
-            }*/
-
-            /*while (i < 5)
-            {
-                printf("\nSoy un perro del evil ", i);
-                i++;
-            }*/
-
-            /*do
-            {
-                printf("\nEl valor de i es: ", i);
-                i++;
-            } while (i < 5);
-        }
+        printf("\n");
     }
-    else
+    printf("\nwhile:\n");
+    i = 1;
+    while (i <= altura)
     {
-        printf(" mundo");
-    }*/
+        j = 250;
+        while (j < 250 + i)
+        {
+            if (j % 2 == 0)
+                printf("-");
+            else
+                printf("+");
+            j++;
+        }
+        i++;
+        printf("\n");
+    }
+    printf("\ndo:\n");
+    i = 1;
+    do
+    {
+        j = 250;
+        do
+        {
+            if (j % 2 == 0)
+                printf("-");
+            else
+                printf("+");
+            j++;
+        } while (j < 250 + i);
+        i++;
+        printf("\n");
+    } while (i <= altura);
 }
