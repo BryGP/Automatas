@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Bry\\Documents\\ITQ\\Semestre 6\\Lenguajes y Automatas 2\\Unidad 1\\Sintaxis 2\\Sintaxis 2.csproj": {}
+    "C:\\Users\\Bry\\Documents\\ITQ\\Semestre 6\\Lenguajes y Automatas 2\\Unidad 3\\Sintaxis 2\\Sintaxis 2.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Bry\\Documents\\ITQ\\Semestre 6\\Lenguajes y Automatas 2\\Unidad 1\\Sintaxis 2\\Sintaxis 2.csproj": {
+    "C:\\Users\\Bry\\Documents\\ITQ\\Semestre 6\\Lenguajes y Automatas 2\\Unidad 3\\Sintaxis 2\\Sintaxis 2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Bry\\Documents\\ITQ\\Semestre 6\\Lenguajes y Automatas 2\\Unidad 1\\Sintaxis 2\\Sintaxis 2.csproj",
+        "projectUniqueName": "C:\\Users\\Bry\\Documents\\ITQ\\Semestre 6\\Lenguajes y Automatas 2\\Unidad 3\\Sintaxis 2\\Sintaxis 2.csproj",
         "projectName": "Sintaxis 2",
-        "projectPath": "C:\\Users\\Bry\\Documents\\ITQ\\Semestre 6\\Lenguajes y Automatas 2\\Unidad 1\\Sintaxis 2\\Sintaxis 2.csproj",
+        "projectPath": "C:\\Users\\Bry\\Documents\\ITQ\\Semestre 6\\Lenguajes y Automatas 2\\Unidad 3\\Sintaxis 2\\Sintaxis 2.csproj",
         "packagesPath": "C:\\Users\\Bry\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Bry\\Documents\\ITQ\\Semestre 6\\Lenguajes y Automatas 2\\Unidad 1\\Sintaxis 2\\obj\\",
+        "outputPath": "C:\\Users\\Bry\\Documents\\ITQ\\Semestre 6\\Lenguajes y Automatas 2\\Unidad 3\\Sintaxis 2\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Bry\\AppData\\Roaming\\NuGet\\NuGet.Config"
