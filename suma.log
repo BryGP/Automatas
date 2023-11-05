@@ -1,11 +1,19 @@
 Autor: Guillermo Fernandez Romero
 Fecha: 3-Mayo-2023 15:09
-k =  3 5 + 8 * 10 4 - 2 / - = 61
- 61-----------------
+a =  1 = 1
+Do While: 
+a =  +
+ 1 + = 2
+ <=
+ 3a =  +
+ 1 + = 3
+ <=
+ 3a =  +
+ 1 + = 4
+ <=
+ 3-----------------
 V a r i a b l e s
 -----------------
-altura Char = 0
-i Char = 0
-j Char = 0
-k Int = 61
+k Int = 0
+a Int = 4
 -----------------

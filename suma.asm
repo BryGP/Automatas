@@ -2,63 +2,43 @@
 ; Fecha: 3-Mayo-2023
 include 'emu8086.inc'
 org 100h
-MOV AX, 3
+MOV AX, 1
 PUSH AX
-MOV AX, 5
+POP AX
+; Asignacion a
+MOV a, AX
+
+; Do While: 0
+InicioDo0:
+
+; Printf
+print "    Hola, a = "
+call print_num
+MOV AX, a
+PUSH AX
+MOV AX, 1
 PUSH AX
 POP BX
 POP AX
 ADD AX, BX
 PUSH AX
-MOV AX, 8
-PUSH AX
-POP BX
 POP AX
-MUL  BX
-PUSH AX
-MOV AX, 10
-PUSH AX
-MOV AX, 4
-PUSH AX
-POP BX
-POP AX
-SUB AX, BX
-PUSH AX
-MOV AX, 2
-PUSH AX
-POP BX
-POP AX
-DIV  BX
-PUSH AX
-POP BX
-POP AX
-SUB AX, BX
-PUSH AX
-POP AX
-; Asignacion k
-MOV k, AX
-MOV AX, k
-PUSH AX
-MOV AX, 61
-PUSH AX
-POP BX
-POP AX
-CMP AX, BX
-JNE Eif1
-; If: 2
-; Condicion Eif1
+; Asignacion a
+MOV a, AX
+
 ; Printf
-; Else: Eif1
+print "    Hola, a = "
+
 ; Printf
-Eif1:
+print "    Hola, a = "
+FinDo0:
+
 int 20h
 RET
 define_scan_num
 define_print_num
 define_print_num_uns
 ; V a r i a b l e s
-altura dw 0h
-i dw 0h
-j dw 0h
 k dw 0h
+a dw 0h
 END
