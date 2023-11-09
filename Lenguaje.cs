@@ -13,7 +13,7 @@ using System.Threading.Tasks;
     [DETAILS] Requerimiento 5: Programar do para que genere una sola vez el codigo
     [DETAILS] Requerimiento 6: Programar while para que genere una sola vez el codigo
     [LISTO]   Requerimiento 7: Programar el for para que genere una sola vez el codigo
-    [HELP!]   Requerimiento 8: Programar el CAST
+    [LISTO]   Requerimiento 8: Programar el CAST
 */
 
 namespace Sintaxis_2
@@ -70,6 +70,7 @@ namespace Sintaxis_2
             log.WriteLine("-----------------");
             log.WriteLine("V a r i a b l e s");
             log.WriteLine("-----------------");
+            asm.WriteLine();
             asm.WriteLine("; V a r i a b l e s");
             foreach (Variable v in lista)
             {
@@ -253,6 +254,7 @@ namespace Sintaxis_2
         {
             float resultado = 0;
             tipoDatoExpresion = Variable.TiposDatos.Char;
+
             if (!Existe(getContenido()))
             {
                 throw new Error("de sintaxis, la variable <" + getContenido() + "> no está declarada", log, linea, columna);
@@ -262,51 +264,47 @@ namespace Sintaxis_2
             string variable = getContenido();
             match(Tipos.Identificador);
 
-            if (getContenido() == "=")
-            {
-                match("=");
-                Expresion(primeraVez);
-                resultado = stack.Pop();
+            // Vamos a crear una lista que contenga todos los operadores que se pueden usar en una asignacion
+            List<string> operadores = new List<string> { "=", "++", "--", "+=", "-=", "*=", "/=", "%=" };
 
-                if (primeraVez)
+            while (operadores.Contains(getContenido()))
+            {
+                string contenedor = getContenido();
+                match(contenedor);
+
+                if (contenedor == "=")
                 {
-                    asm.WriteLine("POP AX");
-                    asm.WriteLine("; Asignacion " + variable);
-                    asm.WriteLine("MOV " + variable + ", AX");
+                    Expresion(primeraVez);
+                    resultado = stack.Pop();
+
+                    if (primeraVez)
+                    {
+                        asm.WriteLine("POP AX");
+                        asm.WriteLine("; Asignacion " + variable);
+                        asm.WriteLine("MOV " + variable + ", AX");
+                    }
                 }
-            }
-
-            else if (getClasificacion() == Tipos.IncrementoTermino)
-            {
-                if (getContenido() == "++")
+                else if (contenedor == "++")
                 {
-                    match("++");
                     resultado = getValor(variable) + 1;
                     if (primeraVez)
                     {
                         asm.WriteLine("INC " + variable);
                     }
                 }
-                else
+                else if (contenedor == "--")
                 {
-                    match("--");
                     resultado = getValor(variable) - 1;
                     if (primeraVez)
                     {
                         asm.WriteLine("DEC " + variable);
                     }
                 }
-            }
-
-            else if (getClasificacion() == Tipos.IncrementoFactor)
-            {
-                resultado = getValor(variable);
-
-                if (getContenido() == "+=")
+                else if (contenedor == "+=")
                 {
-                    match("+=");
                     Expresion(primeraVez);
-                    resultado += stack.Pop();
+                    resultado = stack.Pop();
+                    resultado += getValor(variable);
 
                     if (primeraVez)
                     {
@@ -314,11 +312,11 @@ namespace Sintaxis_2
                         asm.WriteLine("ADD " + variable + ", AX");
                     }
                 }
-                else if (getContenido() == "-=")
+                else if (contenedor == "-=")
                 {
-                    match("-=");
                     Expresion(primeraVez);
-                    resultado -= stack.Pop();
+                    resultado = stack.Pop();
+                    resultado -= getValor(variable);
 
                     if (primeraVez)
                     {
@@ -326,46 +324,49 @@ namespace Sintaxis_2
                         asm.WriteLine("SUB " + variable + ", AX");
                     }
                 }
-                else if (getContenido() == "*=")
+                else if (contenedor == "*=")
                 {
-                    match("*=");
                     Expresion(primeraVez);
-                    resultado *= stack.Pop();
+                    resultado = stack.Pop();
+                    resultado *= getValor(variable);
 
                     if (primeraVez)
                     {
                         asm.WriteLine("POP AX");
-                        asm.WriteLine("MUL " + variable + ", AX");
+                        asm.WriteLine("MUL " + variable);
+                        asm.WriteLine("MOV " + variable + ", AX");
                     }
                 }
-                else if (getContenido() == "/=")
+                else if (contenedor == "/=")
                 {
-                    match("/=");
                     Expresion(primeraVez);
-                    resultado /= stack.Pop();
+                    resultado = stack.Pop();
+                    resultado /= getValor(variable);
 
                     if (primeraVez)
                     {
                         asm.WriteLine("POP AX");
-                        asm.WriteLine("DIV " + variable + ", AX");
+                        asm.WriteLine("MOV BX," + variable);
+                        asm.WriteLine("MOV DX, 0");
+                        asm.WriteLine("DIV BX");
+                        asm.WriteLine("MOV " + variable + ", AX");
                     }
                 }
-                else if (getContenido() == "%=")
+                else if (contenedor == "%=")
                 {
-                    match("%=");
                     Expresion(primeraVez);
-                    resultado %= stack.Pop();
+                    resultado = stack.Pop();
+                    resultado %= getValor(variable);
 
                     if (primeraVez)
                     {
-                        asm.WriteLine("POP AX");
-                        asm.WriteLine("MOD" + variable + ", AX");
-                        primeraVez = false;
+                        asm.WriteLine("POP BX");
+                        asm.WriteLine("MOV AX, " + variable);
+                        asm.WriteLine("DIV BX");
+                        asm.WriteLine("MOV " + variable + ",DX");
                     }
                 }
             }
-
-            log.WriteLine(" = " + resultado);
 
             if (ejecuta)
             {
@@ -386,24 +387,38 @@ namespace Sintaxis_2
                 }
                 else
                 {
-                    throw new Error("de semantica, no se puede asignar in <" + tipoDatoResultado + "> a un <" + tipoDatoVariable + ">", log, linea, columna);
+                    throw new Error(
+                        "de semantica, no se puede asignar in <"
+                            + tipoDatoResultado
+                            + "> a un <"
+                            + tipoDatoVariable
+                            + ">",
+                        log,
+                        linea,
+                        columna
+                    );
                 }
             }
-            match(";");
+            log.WriteLine(" = " + resultado);
+            if (getContenido() == ";")
+            {
+                match(";");
+            }
         }
 
         //While -> while(Condicion) BloqueInstrucciones | Instruccion
         private void While(bool ejecuta, bool primeraVez)
         {
-            log.WriteLine("while: ");
             asm.WriteLine("; While: " + contWh);
+
+            string etiquetaInicio = "IniWhile" + (contWh);
+            string etiquetaFin = "FinWhile" + (contWh++);
+            string variable = getContenido();
 
             int inicia = caracter;
             int lineaInicio = linea;
 
-            string etiquetaInicio = "IniWhile" + (contWh++);
-            string etiquetaFin = "FinWhile" + (contWh);
-
+            log.WriteLine("While de: " + variable);
             if (primeraVez)
             {
                 asm.WriteLine(etiquetaInicio + ":");
@@ -415,6 +430,7 @@ namespace Sintaxis_2
                 match("(");
                 ejecuta = Condicion(etiquetaFin, primeraVez) && ejecuta;
                 match(")");
+
                 if (getContenido() == "{")
                 {
                     BloqueInstrucciones(ejecuta, primeraVez);
@@ -423,21 +439,26 @@ namespace Sintaxis_2
                 {
                     Instruccion(ejecuta, primeraVez);
                 }
+                primeraVez = false;
+
                 if (ejecuta)
                 {
                     archivo.DiscardBufferedData();
-                    caracter = inicia - 5;
+                    caracter = inicia - variable.Length;
                     archivo.BaseStream.Seek(caracter, SeekOrigin.Begin);
                     nextToken();
                     linea = lineaInicio;
+                    caracter = inicia;
                 }
-                asm.WriteLine("JMP " + etiquetaInicio);
+
+                if (primeraVez)
+                {
+                    asm.WriteLine("JMP " + etiquetaInicio);
+                    asm.WriteLine(etiquetaFin + ":");
+                }
             }
             while (ejecuta);
-            asm.WriteLine(etiquetaFin + ":");
             asm.WriteLine();
-            match(")");
-            match(";");
         }
         //Do -> do BloqueInstrucciones | Instruccion while(Condicion)
         private void Do(bool ejecuta, bool primeraVez)
@@ -447,12 +468,13 @@ namespace Sintaxis_2
             asm.WriteLine("; Do While: " + contDo);
             match("do");
 
-            string etiquetaInicio = "InicioDo" + (contDo++);
-            string etiquetaFin = "FinDo" + (--contDo);
+            string etiquetaInicio = "InicioDo" + (contDo);
+            string etiquetaFin = "FinDo" + (contDo++);
 
             int inicia = caracter;
             int lineaInicio = linea;
 
+            log.WriteLine("Do While de: " + getContenido());
             if (primeraVez)
             {
                 asm.WriteLine(etiquetaInicio + ":");
@@ -484,30 +506,29 @@ namespace Sintaxis_2
                     nextToken();
                     linea = lineaInicio;
                 }
-         
+
                 if (primeraVez)
                 {
-                    asm.WriteLine("CMP AX, BX");
+                    //asm.WriteLine("CMP AX, BX");
                     asm.WriteLine("JMP " + etiquetaInicio);
+                    asm.WriteLine(etiquetaFin + ":");
                 }
+                primeraVez = false;
             }
             while (ejecuta);
-            asm.WriteLine(etiquetaFin + ":");
             asm.WriteLine();
         }
-
         //For -> for(Asignacion Condicion; Incremento) BloqueInstrucciones | Instruccion
         private void For(bool ejecuta, bool primeraVez)
         {
-            log.WriteLine("for: ");
             asm.WriteLine();
             asm.WriteLine("; For: " + contFor);
             match("for");
             match("(");
             Asignacion(ejecuta, primeraVez);
 
-            string etiquetaInicio = "InicioFor" + (contFor++);
-            string etiquetaFin = "FinFor" + (--contFor);
+            string etiquetaInicio = "InicioFor" + (contFor);
+            string etiquetaFin = "FinFor" + (contFor++);
 
             int inicia = caracter;
             int lineaInicio = linea;
@@ -538,7 +559,6 @@ namespace Sintaxis_2
                 {
                     Instruccion(ejecuta, primeraVez);
                 }
-                primeraVez = false;
 
                 // Agregamos las banderas para saber si es un incremento o decremento
                 if (getValor(variable) < resultado)
@@ -591,12 +611,12 @@ namespace Sintaxis_2
 
                 if (primeraVez)
                 {
-                    asm.WriteLine("INC " + variable);  // Agregar esta línea para incrementar i
                     asm.WriteLine("JMP " + etiquetaInicio);
+                    asm.WriteLine(etiquetaFin + ":");
                 }
+                primeraVez = false;
             }
             while (ejecuta);
-            asm.WriteLine(etiquetaFin + ":");
             asm.WriteLine(); // Salto de linea            
         }
 
@@ -657,25 +677,23 @@ namespace Sintaxis_2
                     return R2 <= R1;
                 default:
                     if (primeraVez) asm.WriteLine("JE " + etiqueta);
+                    primeraVez = false;
                     return R2 != R1;
             }
         }
         //If -> if (Condicion) BloqueInstrucciones | Instruccion (else BloqueInstrucciones | Instruccion)?
         private void If(bool ejecuta, bool primeraVez)
         {
+            asm.WriteLine("; If: " + contIf);
+            log.WriteLine("If: ");
             match("if");
             match("(");
+
             string etiquetaIf = "IniIf" + (contIf++);
             string etiquetafin = "Iffin" + contIf;
             string etiquetaElse = "Else" + contEl;
 
-            if (primeraVez)
-            {
-                asm.WriteLine(etiquetaIf + ":");
-                asm.WriteLine("; Condicion del " + etiquetaIf);
-            }
-            bool evaluacion = Condicion(etiquetaIf, primeraVez) && ejecuta;
-            Console.WriteLine(evaluacion);
+            bool evaluacion = Condicion(etiquetaIf, primeraVez);
             match(")");
 
             if (getContenido() == "{")
@@ -688,16 +706,12 @@ namespace Sintaxis_2
             }
             if (primeraVez)
             {
-                asm.WriteLine("JMP " + etiquetafin);
+                asm.WriteLine("JMP " + etiquetaElse);
+                asm.WriteLine(etiquetaIf + ":");
             }
 
             if (getContenido() == "else")
             {
-                if (primeraVez)
-                {
-                    asm.WriteLine("; Condicion del " + etiquetaIf);
-                    asm.WriteLine(etiquetaElse + ":");
-                }
                 match("else");
 
                 if (getContenido() == "{")
@@ -708,6 +722,7 @@ namespace Sintaxis_2
                 {
                     Instruccion(!evaluacion && ejecuta, primeraVez);
                 }
+                primeraVez = false;
             }
             if (primeraVez)
             {
@@ -719,27 +734,42 @@ namespace Sintaxis_2
         //Printf -> printf(cadena(,Identificador)?);
         private void Printf(bool ejecuta, bool primeraVez)
         {
-            asm.WriteLine();
-            asm.WriteLine("; Printf");
             match("printf");
             match("(");
-
-            if (getClasificacion() == Tipos.Cadena) // Si se clasifica como una cadena, entonces...
+            if (ejecuta)
             {
                 string cadena = getContenido().TrimStart('"');
+                string cadenaasm;
                 cadena = cadena.Remove(cadena.Length - 1);
+                cadenaasm = cadena;
                 cadena = cadena.Replace(@"\n", "\n");
-
-                if (ejecuta)
+                cadena = cadena.Replace(@"\t", "\t");
+                cadenaasm = cadenaasm.Replace(@"\n", "'\nprintn '' \nprint '");
+                cadenaasm = cadenaasm.Replace(@"\t", "' \nprint ' ");
+                Console.Write(cadena);
+                if (primeraVez)
                 {
-                    // Cadena con ASM
-                    asm.WriteLine("print " + "\"" + getContenido().Replace("\"", "").Replace("\\n", ".") + "\"");
-                    // Elimina el \n y da un salto de línea
-                    Console.Write(getContenido().Replace("\"", "").Replace("\\n", Environment.NewLine));
+                    asm.WriteLine("print '" + cadenaasm + "'");
                 }
             }
-            match(Tipos.Cadena);
+            if (ejecuta == false)
+            {
 
+                string cadena = getContenido().TrimStart('"');
+                string cadenaasm;
+                cadena = cadena.Remove(cadena.Length - 1);
+                cadenaasm = cadena;
+
+                cadenaasm = cadenaasm.Replace(@"\n", "'\nprintn '' \nprint '");
+                cadenaasm = cadenaasm.Replace(@"\t", "' \nprint ' ");
+                if (primeraVez)
+                {
+
+                    asm.WriteLine("print '" + cadenaasm + "'");
+                }
+            }
+
+            match(Tipos.Cadena);
             if (getContenido() == ",")
             {
                 match(",");
@@ -747,21 +777,31 @@ namespace Sintaxis_2
                 {
                     throw new Error("de sintaxis, la variable <" + getContenido() + "> no está declarada", log, linea, columna);
                 }
-
                 if (ejecuta)
                 {
                     Console.Write(getValor(getContenido()));
                     if (primeraVez)
                     {
-                        asm.WriteLine("call print_num");
+                        string variable = getContenido();
+                        asm.WriteLine("MOV AX, " + variable);
+                        asm.WriteLine("CALL print_num");
+                    }
+                }
+                if (ejecuta == false)
+                {
+                    if (primeraVez)
+                    {
+                        string variable = getContenido();
+                        asm.WriteLine("MOV AX, " + variable);
+                        asm.WriteLine("CALL print_num");
                     }
                 }
                 match(Tipos.Identificador);
-                primeraVez = false;
             }
             match(")");
             match(";");
         }
+
         //Scanf -> scanf(cadena,&Identificador);
         private void Scanf(bool ejecuta)
         {
@@ -780,7 +820,7 @@ namespace Sintaxis_2
             string variable = getContenido();
             match(Tipos.Identificador);
 
-            if (ejecuta)
+            if (ejecuta || !ejecuta)
             {
                 string captura = "" + Console.ReadLine();
                 float resultado = float.Parse(captura);
@@ -788,10 +828,8 @@ namespace Sintaxis_2
 
                 if (primeraVez)
                 {
-                    asm.WriteLine("MOV " + variable + ", CX");
                     asm.WriteLine("call scan_num");
-                    asm.WriteLine("MOV AX, CX");
-                    asm.WriteLine();
+                    asm.WriteLine("MOV " + variable + ", CX");
                 }
             }
             match(")");
@@ -873,6 +911,7 @@ namespace Sintaxis_2
                 {
                     asm.WriteLine("POP BX");
                     asm.WriteLine("POP AX");
+                    asm.WriteLine("XOR AX, AX");
                 }
                 if (operador == "*")
                 {
@@ -881,6 +920,7 @@ namespace Sintaxis_2
                     {
                         asm.WriteLine("MUL BX");
                         asm.WriteLine("PUSH AX");
+                        asm.WriteLine("XOR AX, AX");
                     }
                 }
                 else if (operador == "/")
@@ -890,6 +930,7 @@ namespace Sintaxis_2
                     {
                         asm.WriteLine("DIV BX");
                         asm.WriteLine("PUSH AX");
+                        asm.WriteLine("XOR AX, AX");
                     }
                 }
                 else
@@ -899,6 +940,7 @@ namespace Sintaxis_2
                     {
                         asm.WriteLine("DIV BX");
                         asm.WriteLine("PUSH DX");
+                        asm.WriteLine("XOR DX, DX");
                     }
                 }
             }
@@ -968,11 +1010,6 @@ namespace Sintaxis_2
                 {
                     tipoDatoExpresion = tipoDatoCast;
                     stack.Push(castea(stack.Pop(), tipoDatoCast));
-
-                    if (primeraVez)
-                    {
-                        asm.WriteLine("POP AX");
-                    }
                 }
             }
         }
@@ -981,14 +1018,24 @@ namespace Sintaxis_2
             switch (tipoDato)
             {
                 case Variable.TiposDatos.Char:
+                    if (primeraVez)
+                    {
+                        asm.WriteLine("POP AX");
+                        asm.WriteLine("MOV BX, 256");
+                        asm.WriteLine("DIV BX");
+                        asm.WriteLine("PUSH DX");
+                    }
                     return MathF.Round(resultado) % 256;
-                    asm.WriteLine("POP");
-                    asm.WriteLine("PUSH");
 
                 case Variable.TiposDatos.Int:
+                    if (primeraVez)
+                    {
+                        asm.WriteLine("POP AX");
+                        asm.WriteLine("MOV BX, 65536");
+                        asm.WriteLine("DIV BX");
+                        asm.WriteLine("PUSH DX");
+                    }
                     return MathF.Round(resultado) % 65536;
-                    asm.WriteLine("POP");
-                    asm.WriteLine("PUSH");
             }
             return resultado;
         }
