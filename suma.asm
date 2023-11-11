@@ -133,8 +133,6 @@ INC j
 JMP InicioFor2
 FinFor2:
 
-; If: 2
-
 
 
 
@@ -146,47 +144,25 @@ JMP InicioFor1
 FinFor1:
 
 
-; For: 3
-
-; If: 3
-
-
-
-; If: 4
-
-
-
-; If: 5
 
 
 
 
 
 
-; For: 4
-
-; If: 6
-
-
-
-; If: 7
-
-
-
-; If: 8
-
-
-
-; If: 9
 
 
 
 
 
 
-; For: 5
 
-; If: 10
+
+
+
+
+
+
 
 
 
@@ -271,8 +247,6 @@ INC j
 JMP IniWhile2
 FinWhile2:
 
-; If: 12
-
 
 
 INC i
@@ -284,47 +258,25 @@ JMP IniWhile1
 FinWhile1:
 
 
-; While: 3
-
-; If: 13
-
-
-
-; If: 14
-
-
-
-; If: 15
 
 
 
 
 
 
-; While: 4
-
-; If: 16
-
-
-
-; If: 17
-
-
-
-; If: 18
-
-
-
-; If: 19
 
 
 
 
 
 
-; While: 5
 
-; If: 20
+
+
+
+
+
+
 
 
 
@@ -418,30 +370,16 @@ JMP InicioDo1
 FinDo1:
 
 
-; Do While: 3
-
-; If: 22
-
-
-
-; If: 23
 
 
 
 
 
 
-; Do While: 4
-
-; If: 24
 
 
 
-; If: 25
 
-
-
-; If: 26
 
 
 

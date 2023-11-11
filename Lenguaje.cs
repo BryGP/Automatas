@@ -420,9 +420,11 @@ namespace Sintaxis_2
         //While -> while(Condicion) BloqueInstrucciones | Instruccion
         private void While(bool ejecuta, bool primeraVez)
         {
-            asm.WriteLine();
-            asm.WriteLine("; While: " + contWh);
-
+            if (primeraVez)
+            {
+                asm.WriteLine();
+                asm.WriteLine("; While: " + contWh);
+            }
             string etiquetaInicio = "IniWhile" + (contWh);
             string etiquetaFin = "FinWhile" + (contWh++);
             string variable = getContenido();
@@ -475,9 +477,12 @@ namespace Sintaxis_2
         //Do -> do BloqueInstrucciones | Instruccion while(Condicion)
         private void Do(bool ejecuta, bool primeraVez)
         {
+            if (primeraVez)
+            {
+                asm.WriteLine();
+                asm.WriteLine("; Do While: " + contDo);
+            }
             log.WriteLine("Do While: ");
-            asm.WriteLine();
-            asm.WriteLine("; Do While: " + contDo);
             match("do");
 
             string etiquetaInicio = "InicioDo" + (contDo);
@@ -532,8 +537,11 @@ namespace Sintaxis_2
         //For -> for(Asignacion Condicion; Incremento) BloqueInstrucciones | Instruccion
         private void For(bool ejecuta, bool primeraVez)
         {
-            asm.WriteLine();
-            asm.WriteLine("; For: " + contFor);
+            if (primeraVez)
+            {
+                asm.WriteLine();
+                asm.WriteLine("; For: " + contFor);
+            }
             match("for");
             match("(");
             Asignacion(ejecuta, primeraVez);
@@ -695,8 +703,11 @@ namespace Sintaxis_2
         //If -> if (Condicion) BloqueInstrucciones | Instruccion (else BloqueInstrucciones | Instruccion)?
         private void If(bool ejecuta, bool primeraVez)
         {
-            asm.WriteLine();
-            asm.WriteLine("; If: " + contIf);
+            if (primeraVez)
+            {
+                asm.WriteLine();
+                asm.WriteLine("; If: " + contIf);
+            }
             log.WriteLine("If: ");
             match("if");
             match("(");
@@ -757,7 +768,7 @@ namespace Sintaxis_2
             cadena = cadena.Replace("\\t", "\t");
 
             cadenita = cadenita.Replace("\\n", "'\nprintn '' \nprint '");
-            cadenita = cadenita.Replace("\\t", "'\nprint '");
+            cadenita = cadenita.Replace("\\t", "'\nprint                  '");
 
             if (ejecuta)
             {
@@ -771,7 +782,7 @@ namespace Sintaxis_2
             {
                 cadenita = cadena;
                 cadenita = cadenita.Replace("\\n", "'\nprintn '' \nprint '");
-                cadenita = cadenita.Replace("\\t", "'\nprint '");
+                cadenita = cadenita.Replace("\\t", "'\nprint               '");
 
                 if (primeraVez)
                 {
