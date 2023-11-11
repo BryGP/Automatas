@@ -2,25 +2,65 @@
 #include <math.h>
 #include <iostream>
 
-char altura, i, j;
-int k;
+float altura, i, j, k;
+int a, b;
 
 void main() // Funcion principal
 {
-    k = (3 + 5) * 8 - (10 - 4) / 2;
+    a = 258;
+    a = (char)(a);
+    a += 8;
+    a *= 10;
+    a /= 100;
+    printf("Valor Casteado de a: ", a);
+    printf("\nDigite el valor de altura: ");
+    scanf("&i", &altura);
 
-    /*for (i = 0; i < 10; i++)
+    printf("\nfor:\n");
+    for (i = 1; i <= altura; i++)
     {
-        printf("\nHola");
-        k = i;
-    }*/
-
-    if (k == 61)
-    {
-        printf("\nHola");
+        printf("\t");
+        for (j = 250; j < 250 + i; j++)
+        {
+            if (j % 2 == 0)
+                printf("-");
+            else
+                printf("+");
+        }
+        printf("\n");
     }
-    else
+    printf("\nwhile:\n");
+    i = 1;
+    while (i <= altura)
     {
-        printf("\nAdios");
+        printf("\t");
+        j = 250;
+        while (j < 250 + i)
+        {
+            if (j % 2 == 0)
+                printf("-");
+            else
+                printf("+");
+            j++;
+        }
+        i++;
+        printf("\n");
     }
+    printf("\ndo:\n");
+    i = 1;
+    do
+    {
+        printf("\t");
+        j = 250;
+        do
+        {
+            if (j % 2 == 0)
+                printf("-");
+            else
+                printf("+");
+            j++;
+        } while (j < 250 + i);
+        i++;
+        printf("\n");
+    } while (i <= altura);
 }
