@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Sintaxis_2
+namespace Generador
 {
     public class Sintaxis : Lexico
     {

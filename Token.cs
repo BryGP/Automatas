@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Sintaxis_2
+namespace Generador
 {
     public class Token
     {
-        public enum Tipos { Identificador, Numero, Asignacion, Inicializacion,
-                            OperadorRelacional, OperadorTermino, OperadorFactor,
-                            IncrementoTermino, IncrementoFactor, Cadena, Ternario,
-                            FinSentencia, OperadorLogico, Inicio, Fin, Caracter,
-                            TipoDato, Zona, Condicion, Ciclo };
+        public enum Tipos
+        {
+            ST, SNT, Flechita, FinProduccion, Epsilon, Or,
+            PIzq, PDer
+        };
         private string Contenido;
-        private Tipos   Clasificacion;
+        private Tipos Clasificacion;
 
         public Token()
         {
             Contenido = "";
-            Clasificacion = Tipos.Identificador;
+            Clasificacion = Tipos.ST;
         }
 
         public void setContenido(string Contenido)

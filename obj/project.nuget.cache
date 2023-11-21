@@ -1,13 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VUhVscW1T/LZotWcsetdjGVVr0WhYxvgDcYhmjTE02tbmSHm4y2ZqhtSjb8WFqN+DscGJksLBGB+ZKvloMVukA==",
+  "dgSpecHash": "ZEJ014oxFeSGpBMNi8J8SKZ0Awv05ujuG7g6wBEk/mgrfdrMm649Or9DZd7WGvZURPpRfpjUKsL0vYHXWRA9Kw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Bry\\Documents\\ITQ\\Semestre 6\\Lenguajes y Automatas 2\\Unidad 3\\Sintaxis 2\\Sintaxis 2.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\Bry\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.21\\microsoft.netcore.app.ref.6.0.21.nupkg.sha512",
-    "C:\\Users\\Bry\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.21\\microsoft.windowsdesktop.app.ref.6.0.21.nupkg.sha512",
-    "C:\\Users\\Bry\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.21\\microsoft.aspnetcore.app.ref.6.0.21.nupkg.sha512",
-    "C:\\Users\\Bry\\.nuget\\packages\\microsoft.netcore.app.host.win-x86\\6.0.21\\microsoft.netcore.app.host.win-x86.6.0.21.nupkg.sha512"
-  ],
+  "projectFilePath": "C:\\Users\\bryan\\Documents\\ITQ\\Semestre 6\\Lenguajes y Automatas 2\\Unidad 4\\Generador\\Generador.csproj",
+  "expectedPackageFiles": [],
   "logs": []
 }

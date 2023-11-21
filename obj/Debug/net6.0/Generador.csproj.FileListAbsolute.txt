@@ -1,0 +1,5 @@
+C:\Users\bryan\Documents\ITQ\Semestre 6\Lenguajes y Automatas 2\Unidad 4\Generador\obj\Debug\net6.0\Generador.csproj.AssemblyReference.cache
+C:\Users\bryan\Documents\ITQ\Semestre 6\Lenguajes y Automatas 2\Unidad 4\Generador\obj\Debug\net6.0\Generador.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\bryan\Documents\ITQ\Semestre 6\Lenguajes y Automatas 2\Unidad 4\Generador\obj\Debug\net6.0\Generador.AssemblyInfoInputs.cache
+C:\Users\bryan\Documents\ITQ\Semestre 6\Lenguajes y Automatas 2\Unidad 4\Generador\obj\Debug\net6.0\Generador.AssemblyInfo.cs
+C:\Users\bryan\Documents\ITQ\Semestre 6\Lenguajes y Automatas 2\Unidad 4\Generador\obj\Debug\net6.0\Generador.csproj.CoreCompileInputs.cache

@@ -1,0 +1,2 @@
+Printf -> printf(cadena);\;
+A -> a b Printf \;
