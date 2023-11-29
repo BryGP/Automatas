@@ -39,18 +39,10 @@ namespace Generador
             generado.WriteLine("}");
         }
         // Produccion -> SNT Flechita ListaSimbolos FinProduccion
-        private void Producciones(bool Primeravez = true)
+        private void Producciones()
         {
-            if (Primeravez)
-            {
-                generado.WriteLine("        public void " + getContenido() + ("()"));
-                generado.WriteLine("        {");
-            }
-            else
-            {
-                generado.WriteLine("        private void " + getContenido() + ("()"));
-                generado.WriteLine("        {");
-            }
+            generado.WriteLine("        public void " + getContenido() + ("()"));
+            generado.WriteLine("        {");
             match(Tipos.SNT);
             match(Tipos.Flechita);
             listaSimbolos();
@@ -59,19 +51,9 @@ namespace Generador
 
             if (getClasificacion() == Tipos.SNT)
             {
-                Producciones(false);
+                Producciones();
             }
         }
-        // ListaProducciones -> Producciones;
-        private void ListaProducciones()
-        {
-            Producciones();
-            if(getContenido() != "}")
-            {
-                ListaProducciones();
-            }
-        }
-
         private void listaSimbolos()
         {
             if (esPalabraReservada(getContenido()))
@@ -89,26 +71,15 @@ namespace Generador
                 generado.WriteLine("            " + getContenido() + "();");
                 match(Tipos.SNT);
             }
-            else if (getClasificacion() == Tipos.Epsilon)
+            else if (getClasificacion() == Tipos.PIzq)
             {
+                ListaEpsilon();
                 match(Tipos.Epsilon);
-                string simbolo = getContenido();                
-
-                if (esPalabraReservada(simbolo))
-                {
-                    match(Tipos.SNT);
-                    generado.WriteLine("            if (getClasificacion() == Tipos."+simbolo+")");
-                    generado.WriteLine("            {");
-                    generado.WriteLine("                match(Tipos." + simbolo + ");");
-                }
-                else
-                {
-                    generado.WriteLine("            if (getContenido() == \""+simbolo+"\")");
-                    match(Tipos.ST);
-                    generado.WriteLine("            {");
-                    generado.WriteLine("                match(\"" + simbolo + "\");");
-                }
-                generado.WriteLine("            }");
+            }
+            else if (getClasificacion() == Tipos.Or)
+            {
+                OrsList();
+                match(Tipos.Or);
             }
 
             if (getClasificacion() != Tipos.FinProduccion)
@@ -116,11 +87,38 @@ namespace Generador
                 listaSimbolos();
             }
         }
-        // Lista de ors
-        public void OrsList(bool Primeravez = true)
+        // Lista de Epsilon -> \;
+        private void ListaEpsilon()
         {
+            match(Tipos.PIzq);
             string simbolo = getContenido();
+
+            if (esPalabraReservada(simbolo))
+            {
+                match(Tipos.SNT);
+                generado.WriteLine("            if (getClasificacion() == Tipos." + simbolo + ")");
+                generado.WriteLine("            {");
+                generado.WriteLine("                match(Tipos." + simbolo + ");");
+            }
+            else
+            {
+                generado.WriteLine("            if (getContenido() == \"" + simbolo + "\")");
+                match(Tipos.ST);
+                generado.WriteLine("            {");
+                generado.WriteLine("                match(\"" + simbolo + "\");");
+            }
+            generado.WriteLine("            }");
+
+            if (getClasificacion() == Tipos.Epsilon)
+            {
+                ListaEpsilon();
+            }
+        }
+        // Lista de ors -> |\( OrsList \)
+        private void OrsList(bool Primeravez = true)
+        {
             match(Tipos.ST);
+            string simbolo = getContenido();
 
             if (esPalabraReservada(simbolo))
             {
