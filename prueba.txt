@@ -1,10 +1,10 @@
 Programa -> Librerias Main \;
-Librerias -> #include <Identificador.h> 
-                \? \(Cadena include Main\) 
+Librerias -> #include <Identificador.h>
+                \? \(Cadena include Main\)
                 \| \(Cadena include math Main\)
-                \| \(Cadena include\) 
+                \| \(Cadena include\)
              #\; 
 Main -> void main()
-        {
-
+        {                
+                
         } \;

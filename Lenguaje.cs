@@ -71,28 +71,34 @@ namespace Generador
                 generado.WriteLine("            " + getContenido() + "();");
                 match(Tipos.SNT);
             }
-            else if (getClasificacion() == Tipos.PIzq)
+            else if (getClasificacion() == Tipos.Epsilon)
             {
-                ListaEpsilon();
                 match(Tipos.Epsilon);
+                match(Tipos.PIzq);
+                LlamarEpsilon();
+                ListaEpsilon();
+                match(Tipos.PDer);
             }
             else if (getClasificacion() == Tipos.Or)
             {
-                OrsList();
                 match(Tipos.Or);
+                match(Tipos.PIzq);
+                LlamarOrs();
+                ListaOrs();
+                match(Tipos.PDer);
             }
-
             if (getClasificacion() != Tipos.FinProduccion)
             {
                 listaSimbolos();
             }
         }
-        // Lista de Epsilon -> \;
-        private void ListaEpsilon()
+        // Epsilon -> Epsilon PIzq SimbolosEpsilon PDer
+        // Funcion para llamar a un epsilon desde listaSimbolos
+        private void LlamarEpsilon()
         {
-            match(Tipos.PIzq);
             string simbolo = getContenido();
-
+            generado.WriteLine();
+            generado.WriteLine("            // Aqui comienza el epsilon");
             if (esPalabraReservada(simbolo))
             {
                 match(Tipos.SNT);
@@ -100,69 +106,127 @@ namespace Generador
                 generado.WriteLine("            {");
                 generado.WriteLine("                match(Tipos." + simbolo + ");");
             }
-            else
+            else if (getClasificacion() == Tipos.ST)
             {
                 generado.WriteLine("            if (getContenido() == \"" + simbolo + "\")");
                 match(Tipos.ST);
                 generado.WriteLine("            {");
                 generado.WriteLine("                match(\"" + simbolo + "\");");
             }
+            else
+            {
+                throw new Error("de sintaxis, se espera: " + simbolo + "en la linea",log, linea, columna);
+            }
+            ListaEpsilon();
             generado.WriteLine("            }");
-
-            if (getClasificacion() == Tipos.Epsilon)
+        }
+        // SimbolosEpsilon -> ListaSimbolos | Epsilon
+        // Generar los match de un epsilon
+        private void ListaEpsilon()
+        {
+            if (esPalabraReservada(getContenido()))
+            {
+                generado.WriteLine("                match(Tipos." + getContenido() + ");");
+                match(Tipos.SNT);
+            }
+            else if (getClasificacion() == Tipos.ST)
+            {
+                generado.WriteLine("                match(\"" + getContenido() + "\");");
+                match(Tipos.ST);
+            }
+            else if (getClasificacion() == Tipos.SNT)
+            {
+                generado.WriteLine("                " + getContenido() + "();");
+                match(Tipos.SNT);
+            }
+            if (getClasificacion() != Tipos.PDer)
             {
                 ListaEpsilon();
             }
         }
         // Lista de ors -> |\( OrsList \)
-        private void OrsList(bool Primeravez = true)
+        // Funcion para llamar a un or desde listaSimbolos
+        private void LlamarOrs()
         {
-            match(Tipos.ST);
             string simbolo = getContenido();
-
+            generado.WriteLine("            // Aqui comienza el or");
             if (esPalabraReservada(simbolo))
             {
-                if (Primeravez)
-                {
-                    generado.WriteLine("if(getClasificacion() == Tipos." + "\"" + simbolo + "\"" + ")");
-                }
-                else
-                {
-                    generado.WriteLine("else if (getClasificacion() == Tipos." + "\"" + simbolo + "\"" + ")");
-                }
+                match(Tipos.SNT);
+                generado.WriteLine("            if (getClasificacion() == Tipos." + simbolo + ")");
+                generado.WriteLine("            {");
+                generado.WriteLine("                match(Tipos." + simbolo + ");");
+                generado.WriteLine("            }");
+            }
+            else if (getClasificacion() == Tipos.ST)
+            {
+                generado.WriteLine("            if (getContenido() == \"" + simbolo + "\")");
+                match(Tipos.ST);
+                generado.WriteLine("            {");
+                generado.WriteLine("                match(\"" + simbolo + "\");");
+                generado.WriteLine("            }");
             }
             else
             {
-                if (Primeravez)
+                throw new Error("de sintaxis, se espera: " + simbolo + "en la linea",log, linea, columna);
+            }
+            if (getClasificacion() != Tipos.FinProduccion)
+            {
+                ListaOrs();
+            }
+        }
+        // OrsList -> ListaSimbolos | OrsList
+        // Generar los match de un or
+        private void ListaOrs()
+        {
+            string simbolo = getContenido();
+            if (esPalabraReservada(simbolo))
+            {
+                match(Tipos.SNT);
+                if (getClasificacion() == Tipos.PDer)
                 {
-                    generado.WriteLine("if(getContenido() == " + "\"" + simbolo + "\"" + ")");
+                    generado.WriteLine("        else");
                 }
                 else
                 {
-                    generado.WriteLine("else if (getContenido() == " + "\"" + simbolo + "\"" + ")");
+                    generado.WriteLine("            else if (getClasificacion() == Tipos." + simbolo + ")");
+                }
+                generado.WriteLine("            {");
+                generado.WriteLine("                match(Tipos." + simbolo + ");");
+                generado.WriteLine("            }");
+            }
+            else if (getClasificacion() == Tipos.ST)
+            {
+                match(Tipos.ST);
+                if (getClasificacion() != Tipos.PDer)
+                {
+                    generado.WriteLine("            else if (getContenido() == \"" + simbolo + "\")");
+                }
+                else
+                {
+                    generado.WriteLine("            else");
+                }
+                generado.WriteLine("            {");
+                generado.WriteLine("                match(\"" + simbolo + "\");");
+                generado.WriteLine("            }");
+            }
+            else if (getClasificacion() == Tipos.SNT)
+            {
+                generado.WriteLine("            else");
+                match(Tipos.SNT);
+                generado.WriteLine("            {");
+                generado.WriteLine("                " + simbolo + "();");
+                generado.WriteLine("            }");
+
+                if (getClasificacion() != Tipos.PDer)
+                {
+                    throw new Error("de sintaxis, <" + simbolo + "> se espera un parentesis \\)", log, linea, columna);
+                    //ListaOrs();
                 }
             }
-            generado.WriteLine("        {");
-
-            if (esPalabraReservada(simbolo))
+            if (getClasificacion() != Tipos.PDer)
             {
-                generado.WriteLine("    match(Tipos." + "\"" + simbolo + "\"" + ");");
-            }
-            else
-            {
-                generado.WriteLine("    match(" + "\"" + simbolo + "\"" + ");");
-            }
-
-            if (getClasificacion() == Tipos.ST || getClasificacion() == Tipos.SNT || getClasificacion() == Tipos.PIzq || getClasificacion() == Tipos.PDer)
-            {
-                listaSimbolos();
-            }
-            generado.WriteLine("        }");
-
-            if (getClasificacion() == Tipos.Or)
-            {
-                match(Tipos.Or);
-                OrsList(false);
+                ListaOrs();
             }
         }
         private bool esPalabraReservada(string palabra)
